@@ -29,11 +29,7 @@ function titleClickHandler(event){ //funkcja, która jest wykonywana w reakcji n
     console.log('Right article was displayed');
 }
 
-const links = document.querySelectorAll('.titles a'); //przypisanie do stałej "links" wszystkich elementów, pasujących do selektora ".titles a"
 
-for(let link of links){ //przypisanie "event listenerów" do każdego linka za pomocą pętli
-    link.addEventListener('click', titleClickHandler); //wywołanie funkcji "titleClickHandler" spowodowane zdarzeniem "click"
-}
 
 /* Generate list of titles */
 const optArticleSelector = '.post'; //zapisanie "ustawień" skryptu w stałych
@@ -57,7 +53,7 @@ function generateTitleLinks(){
         const articleTitle = article.querySelector(optTitleSelector).innerHTML; //odnalezienie elementu za pomocą "querySelector"; odczytanie i zapisanie zawartości elementu za pomocą "innerHtml"
         /* create HTML of the link */
         const linkHTML = '<li><a href="#' + articleId + '"><span>' + articleTitle + '</span></a></li>';
-        console.log(linkHTML);
+        //console.log(linkHTML);
         /* insert (wstaw) link into titleList */
         html = html + linkHTML; //analogicznie: x = x + 1, po każdej iteracji w pętli dodajemy kolejną linijkę kodu HTML do zmiennej
     }
@@ -65,3 +61,11 @@ function generateTitleLinks(){
 }
 
 generateTitleLinks();
+
+/* kod odpowiedzialny za powiązanie kliknięcia w linki z funkcją "titleClickHandler"
+musimy umieścić za wywołaniem funkcji "generateTitleLinks" -
+- najpierw trzeba wygenerować linki, a dopiero potem można dzięki nim przełączać artykuły */
+const links = document.querySelectorAll('.titles a'); //przypisanie do stałej "links" wszystkich elementów, pasujących do selektora ".titles a"
+for(let link of links){ //przypisanie "event listenerów" do każdego linka za pomocą pętli
+    link.addEventListener('click', titleClickHandler); //wywołanie funkcji "titleClickHandler" spowodowane zdarzeniem "click"
+}
