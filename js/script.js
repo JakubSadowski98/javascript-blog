@@ -1,6 +1,7 @@
 'use strict'; //kod będzie uruchamiany w "trybie ścisłym" - pomyłki, które normalnie nie wywołałyby błędu, teraz będą traktowane jak błąd i wyświetlane na czerwono
 
 function titleClickHandler(event){ //funkcja, która jest wykonywana w reakcji na event (kliknięcie na link); w argumencie "event" można znaleźć m.in. informacje "target", która zawiera odniesienie do <span>
+    event.preventDefault(); //blokuje mechanizm automatycznego przewijania strony oraz zmiany adresu url w skutek kliknięcia na link
     const clickedElement = this; //obiekt "this" wskazuje na element, do którego dodaliśmy listener, czyli <a>
     console.log('Link was clicked!');
     /* [DONE] remove class 'active' from all article links  */
