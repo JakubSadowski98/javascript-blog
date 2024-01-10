@@ -48,16 +48,20 @@ function generateTitleLinks(){
         }
     clearMessages(); //wywołanie funkcji
     /* for each article */
-
-    /* get the article id */
-
-    /* find the title element */
-
-    /* get the title from the title element */
-
-    /* create HTML of the link */
-
-    /* insert (wstaw) link into titleList */
+    const articles = document.querySelectorAll(optArticleSelector); //zapisanie do stałej "articles" odniesienia do wszystkich elementów pasujących do selektora zapisanego w stałej "optArticleSelector"
+    let html = ''; //stworzenie zmiennej (nie stałej!) "html", do której będą kolejno doklejane wszystkie linki
+    for(let article of articles){ //utworznie pętli do wykonania pozostałych operacji z osobna dla każdego z artykułów
+        /* get the article id */
+        const articleId = article.getAttribute('id');
+        /* find the title element; get the title from the title element */
+        const articleTitle = article.querySelector(optTitleSelector).innerHTML; //odnalezienie elementu za pomocą "querySelector"; odczytanie i zapisanie zawartości elementu za pomocą "innerHtml"
+        /* create HTML of the link */
+        const linkHTML = '<li><a href="#' + articleId + '"><span>' + articleTitle + '</span></a></li>';
+        console.log(linkHTML);
+        /* insert (wstaw) link into titleList */
+        html = html + linkHTML; //analogicznie: x = x + 1, po każdej iteracji w pętli dodajemy kolejną linijkę kodu HTML do zmiennej
+    }
+    titleList.innerHTML = html; //przypisanie (za jednym razem! - optymalne rozwiązanie) wszystkich linijek kodu HTML do listy
 }
 
 generateTitleLinks();
