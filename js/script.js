@@ -19,14 +19,15 @@ function titleClickHandler(event){ //funkcja, która jest wykonywana w reakcji n
     }
     /* get 'href' attribute from the clicked link */
     const articleSelector = clickedElement.getAttribute('href'); //przypisanie do stałej "articleSelector" wartości atrybutu "href" pobranej z klikniętego linka
-    console.log(articleSelector);
+    console.log('href= ', articleSelector);
     /* find the correct article using the selector (value of 'href' attribute) */
-
+    const targetArticle = document.querySelector(articleSelector); //przypisanie wartość stałej "targetArticle" funkcji "querySelector", wyszukującej artykuł o danym atrybucie href (zapisanym w stałej "articleSelector")
+    console.log(targetArticle);
     /* add class 'active' to the correct article */
 }
 
 const links = document.querySelectorAll('.titles a'); //przypisanie do stałej "links" wszystkich elementów, pasujących do selektora ".titles a"
 
 for(let link of links){ //przypisanie "event listenerów" do każdego linka za pomocą pętli
-    link.addEventListener('click', titleClickHandler);
+    link.addEventListener('click', titleClickHandler); //wywołanie funkcji "titleClickHandler" spowodowane zdarzeniem "click"
 }
