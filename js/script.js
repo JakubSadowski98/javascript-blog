@@ -18,7 +18,8 @@ function titleClickHandler(event){ //funkcja, która jest wykonywana w reakcji n
         activeArticle.classList.remove('active');
     }
     /* get 'href' attribute from the clicked link */
-
+    const articleSelector = clickedElement.getAttribute('href'); //przypisanie do stałej "articleSelector" wartości atrybutu "href" pobranej z klikniętego linka
+    console.log(articleSelector);
     /* find the correct article using the selector (value of 'href' attribute) */
 
     /* add class 'active' to the correct article */
