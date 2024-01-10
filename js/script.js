@@ -10,8 +10,8 @@ function titleClickHandler(event){ //funkcja, która jest wykonywana w reakcji n
         activeLink.classList.remove('active');
     }
     /* [DONE] add class 'active' to the clicked link */
-    console.log('clickedElement:', clickedElement);
     clickedElement.classList.add('active');
+    console.log('clickedElement:', clickedElement);
     /* [DONE] remove class 'active' from all articles */
     const activeArticles = document.querySelectorAll('.posts article.post.active');
     for(let activeArticle of activeArticles){
@@ -19,11 +19,13 @@ function titleClickHandler(event){ //funkcja, która jest wykonywana w reakcji n
     }
     /* get 'href' attribute from the clicked link */
     const articleSelector = clickedElement.getAttribute('href'); //przypisanie do stałej "articleSelector" wartości atrybutu "href" pobranej z klikniętego linka
-    console.log('href= ', articleSelector);
+    console.log('Href value was assigned: ', articleSelector);
     /* find the correct article using the selector (value of 'href' attribute) */
     const targetArticle = document.querySelector(articleSelector); //przypisanie wartość stałej "targetArticle" funkcji "querySelector", wyszukującej artykuł o danym atrybucie href (zapisanym w stałej "articleSelector")
     console.log(targetArticle);
     /* add class 'active' to the correct article */
+    targetArticle.classList.add('active');
+    console.log('Right article was displayed');
 }
 
 const links = document.querySelectorAll('.titles a'); //przypisanie do stałej "links" wszystkich elementów, pasujących do selektora ".titles a"
