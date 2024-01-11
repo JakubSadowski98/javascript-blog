@@ -5,24 +5,22 @@
   "main": "index.js",
   "scripts": {
     "init-project": "npm install && npm-run-all init:*",
-
     "init:dirs": "mkdirp sass css vendor images js",
     "init:files": "touch README.md index.html sass/style.scss js/script.js",
     "init:gitignore": "curl https://raw.githubusercontent.com/github/gitignore/master/Node.gitignore  --ssl-no-revoke -o .gitignore",
-
-    "test": "npm run test:html",
+    "test": "npm-run-all test:*",
     "test:html": "html-validate *.html",
-
+    "test:js": "eslint js/",
+    "test:scss": "stylelint sass/",
     "build": "npm-run-all build:* test",
     "build:sass": "sass --style=compressed --no-source-map sass:css",
     "build:autoprefixer": "postcss css/*.css --use autoprefixer -d css",
-
     "build-dev": "npm-run-all build-dev:sass build:autoprefixer",
     "build-dev:sass": "sass --style=expanded --source-map sass:css",
-
-    "watch": "npm-run-all build build-dev -p watch:*",
+    "watch": "npm-run-all build:* build-dev -p watch:*",
     "watch:browsersync": "browser-sync start --server --files \"css/*.css\" \"*.html\" \"js/*.js\"",
-    "watch:sassprefixer": "onchange sass/*.scss -- npm run build-dev"
+    "watch:sassprefixer": "onchange sass/*.scss -- npm run build-dev",
+    "watch:eslint": "esw --watch --changed --clear js/"
   },
   "keywords": [],
   "author": "",
@@ -30,12 +28,17 @@
   "devDependencies": {
     "autoprefixer": "^10.2.4",
     "browser-sync": "^3.0.2",
+    "eslint": "^8.56.0",
+    "eslint-watch": "^8.0.0",
     "html-validate": "^8.8.0",
     "mkdirp": "^3.0.1",
     "npm-run-all": "^4.1.5",
     "onchange": "^7.1.0",
     "postcss": "^8.2.6",
     "postcss-cli": "^8.3.1",
-    "sass": "^1.69.7"
+    "sass": "^1.69.7",
+    "stylelint": "^16.1.0",
+    "stylelint-config-standard-scss": "^13.0.0",
+    "stylelint-scss": "^6.0.0"
   }
 }
