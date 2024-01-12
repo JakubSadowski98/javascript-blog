@@ -6,9 +6,9 @@ const optArticleSelector = '.post', //selektor artykułów
   optTitleListSelector = '.titles', //selektor listy tytułów (linków)
   optArticleTagsSelector = '.post-tags .list'; //selektor wybierze nam listę <ul>, w której będą zawarte tagi poszczególnych artykułów
 
-/* Display article after click event  */
+/* Display article after click on the proper title-link  *********************************************************************************************/
 function titleClickHandler(event){ //funkcja, która jest wykonywana w reakcji na event (kliknięcie na link); w argumencie "event" można znaleźć m.in. informacje "target", która zawiera odniesienie do <span>
-  console.log('Link was clicked: function titleClickHandler() was run');
+  console.log('Link was clicked');
   event.preventDefault(); //blokuje mechanizm automatycznego przewijania strony w miejsce wskazanego przez link id (np. do artykułu) oraz zmiany adresu url w skutek kliknięcia na link
   const clickedElement = this; //obiekt "this" wskazuje na element, do którego dodaliśmy "event listener", czyli na link <a>
   /* 1. Remove class 'active' from all article links [DONE] */
@@ -29,20 +29,20 @@ function titleClickHandler(event){ //funkcja, która jest wykonywana w reakcji n
   const targetArticle = document.querySelector(articleSelector); //przypisanie elementu do stałej "targetArticle" za pomocą funkcji "querySelector", wyszukującej artykuł o danej wartości atrybutu href (zapisanej w stałej "articleSelector")
   /* 6. Add class 'active' to the correct article [DONE] */
   targetArticle.classList.add('active');
-  console.log('Right article was displayed');
 }
+/**********************************************************************************************************************************************************/
 
-/* Generate list of title-links */
-function generateTitleLinks(){
+/* Generate list of article title-links in sidebar-left ***************************************************************************************************/
+function generateTitleLinks(customSelector = ''){
   /* 1. Remove content of titleList [DONE] */
-  const titleList = document.querySelector(optTitleListSelector); //znalezienie listy linków i przypisanie jej do stałej "titleList"
+  const titleList = document.querySelector(optTitleListSelector); //znalezienie listy linków-tytułów i przypisanie jej do stałej "titleList"
   function clearMessages(){ //funkcja usuwająca zawartość elementu "titleList" - usuwa wszystkie linki
     titleList.innerHTML = '';
   }
   clearMessages(); //wywołanie funkcji
 
   /* for each article */
-  const articles = document.querySelectorAll(optArticleSelector); //znalezienie wszystkich artykułów i zapisanie ich do stałej "articles"
+  const articles = document.querySelectorAll(optArticleSelector + customSelector); //znalezienie wszystkich artykułów (zawierających dany tag, którego selektor atrybutu został wysłany dp funkcji jako argument) i zapisanie ich do stałej "articles"
   let html = ''; //stworzenie zmiennej (nie stałej!) "html", w której zapiszemy linijki kodu HTML dla linków
   for(let article of articles){ //utworznie pętli do wykonania pozostałych operacji z osobna dla każdego z artykułów
     /* 2. Get the article id [DONE] */
@@ -55,19 +55,20 @@ function generateTitleLinks(){
     html = html + linkHTML; //analogicznie: x = x + 1, po każdej iteracji pętli dodajemy kolejną linijkę kodu HTML do zmiennej
   }
   titleList.innerHTML = html; //wstawienie (za jednym razem! - optymalne rozwiązanie) wszystkich linijek kodu HTML do listy
+
+  /* kod odpowiedzialny za powiązanie kliknięcia w linki z funkcją "titleClickHandler"
+  musimy umieścić za częścią funkcji, która jest odpowiedzialna za tworzenie kodu HTML -
+  - najpierw trzeba wygenerować linki, a dopiero potem można przypisywać do nich "event-listenery" */
+  const links = document.querySelectorAll('.titles a'); //przypisanie do stałej "links" wszystkich elementów, pasujących do selektora ".titles a", zatem element "links" będzie zawierał jakąś liczbę linków
+  for(let link of links){ //przypisanie "event listenerów" do każdego linka zawierającego się w stałej "links" za pomocą pętli
+    link.addEventListener('click', titleClickHandler); //powiązanie kliknięcia w link z funkcją "titleClickHandler", inaczej mówiąc: zdarzenie "click" ma wywoływać funkcję "titleClickHandler"
+  }
 }
+/**********************************************************************************************************************************************************/
 
 generateTitleLinks(); //wywołanie funkcji, która wygeneruje linki na podstawie odniesienia do tytułów zawartych w elementach <article>
 
-/* kod odpowiedzialny za powiązanie kliknięcia w linki z funkcją "titleClickHandler"
-musimy umieścić za wywołaniem funkcji "generateTitleLinks" -
-- najpierw trzeba wygenerować linki, a dopiero potem można dzięki nim przełączać artykuły */
-const links = document.querySelectorAll('.titles a'); //przypisanie do stałej "links" wszystkich elementów, pasujących do selektora ".titles a", zatem element "links" będzie zawierał jakąś liczbę linków
-for(let link of links){ //przypisanie "event listenerów" do każdego linka zawierającego się w stałej "links" za pomocą pętli
-  link.addEventListener('click', titleClickHandler); //powiązanie kliknięcia w link z funkcją "titleClickHandler", inaczej mówiąc: zdarzenie "click" ma wywoływać funkcję "titleClickHandler"
-}
-
-/* Generate tags for every article */
+/* Generate tags for every article ***********************************************************************************************/
 function generateTags(){
   /* find all articles */
   const articles = document.querySelectorAll(optArticleSelector); //stała "articles" jest kolekcją wielu elementów, które zawierają odniesienie do każdego artykułu
@@ -93,10 +94,11 @@ function generateTags(){
     /* END LOOP: for every article: */
   }
 }
+/**********************************************************************************************************************************************************/
 
 generateTags();
 
-/* Add action after tag click */
+/* Add action after tag-links click *****************************************************************************************************/
 function tagClickHandler(event){
   /* prevent default action for this event [DONE] */
   event.preventDefault();
@@ -116,24 +118,29 @@ function tagClickHandler(event){
 
   /* find all tag links with "href" attribute equal to the "href" constant [DONE] */
   const tagLinks = document.querySelectorAll('a[href="' + href + '"]'); //znajduje wszystkie linki tagów z wykorzystaniem selektora atrybutu, które mają taki sam atrybut href, jak kliknięty link
-
   for(let tagLink of tagLinks){/* START LOOP: for each found tag link */
     /* add class active [DONE] */
     tagLink.classList.add('active');
   }/* END LOOP: for each found tag link */
-
-  /* execute (wywołaj) function "generateTitleLinks" with article selector as argument */
-  generateTitleLinks('[data-tags~="' + tag + '"]'); //łącznik ~= można odczytać jako "znajdź elementy, które mają atrybut data-tags, który ma w sobie słowo 'tag'".
+  /* execute (wywołaj) function "generateTitleLinks" with article selector as argument [DONE] */
+  generateTitleLinks('[data-tags~="' + tag + '"]'); //łącznik ~= można odczytać jako "znajdź elementy, które mają atrybut data-tags, który ma w sobie słowo przypisane w 'tag'".
 }
+/**********************************************************************************************************************************************************/
 
+/* Add click listener to every tag-link *****************************************************************************************************/
+/* Mamy pewną liczbę tag-linków (każdy tag może mieć kilka linków, które znajdują się w różnych artykułach),
+zatem każdemu tag-linkowi musimy nadać event-listenera */
 function addClickListenersToTags(){
-  /* find all links to tags */
+  /* find all links to tags [DONE] */
+  const tagLinks = document.querySelectorAll('a[href^="#tag-"]');
 
-  /* START LOOP: for each link */
-
-    /* add tagClickHandler as event listener for that link */
-
-  /* END LOOP: for each link */
+  for(let tagLink of tagLinks){/* START LOOP: for each link */
+    /* add tagClickHandler as event listener for that link [DONE] */
+    tagLink.addEventListener('click', tagClickHandler);
+  }/* END LOOP: for each link */
 }
+/**********************************************************************************************************************************************************/
 
 addClickListenersToTags();
+
+
