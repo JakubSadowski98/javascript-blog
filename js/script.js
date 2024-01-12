@@ -1,5 +1,11 @@
 'use strict'; //kod będzie uruchamiany w "trybie ścisłym" - pomyłki, które normalnie nie wywołałyby błędu, teraz będą traktowane jak błąd i wyświetlane na czerwono
 
+/* zapisanie "ustawień" skryptu w stałych; prefiks "opt-" (skrót od option) ma odróżniać te stałe */
+const optArticleSelector = '.post', //selektor artykułów
+  optTitleSelector = '.post-title', //selektor tytułów artykułów
+  optTitleListSelector = '.titles', //selektor listy tytułów (linków)
+  optArticleTagsSelector = '.post-tags .list'; //selektor wybierze nam listę <ul>, w której będą zawarte tagi poszczególnych artykułów
+
 /* Display article after click event  */
 function titleClickHandler(event){ //funkcja, która jest wykonywana w reakcji na event (kliknięcie na link); w argumencie "event" można znaleźć m.in. informacje "target", która zawiera odniesienie do <span>
   console.log('Link was clicked: function titleClickHandler() was run');
@@ -30,14 +36,8 @@ function titleClickHandler(event){ //funkcja, która jest wykonywana w reakcji n
   console.log('Right article was displayed');
 }
 
-/* Generate list of titles */
-/* zapisanie "ustawień" skryptu w stałych; prefiks "opt-" (skrót od option) ma odróżniać te stałe */
-const optArticleSelector = '.post'; //selektor artykułów
-const optTitleSelector = '.post-title'; //selektor tytułów artykułów
-const optTitleListSelector = '.titles'; //selektor listy tytułów (linków)
-
+/* Generate list of title-links */
 function generateTitleLinks(){
-  console.log('Function generateTitleLinks() was run');
   /* ALGORITHM STEPS */
   /* 1. Remove content of titleList [DONE] */
   const titleList = document.querySelector(optTitleListSelector); //znalezienie listy linków i przypisanie jej do stałej "titleList"
@@ -72,3 +72,33 @@ for(let link of links){ //przypisanie "event listenerów" do każdego linka zawi
   link.addEventListener('click', titleClickHandler); //powiązanie kliknięcia w link z funkcją "titleClickHandler", inaczej mówiąc: zdarzenie "click" ma wywoływać funkcję "titleClickHandler"
 }
 
+/* Generate tags for every article */
+function generateTags(){
+  /* ALGORITHM STEPS */
+  /* find all articles */
+  const articles = document.querySelectorAll(optArticleSelector); //stała "articles" jest kolekcją wielu elementów, które zawierają odniesienie do każdego artykułu
+  /* START LOOP: for every article: */
+  for(let article of articles){ //za pomocą pętli przechodzimy (iterujemy) po kolekcji elementów zawartych w "articles"
+    /* find tags wrapper */
+    const tagsWrapper = article.querySelector(optArticleTagsSelector); //w tej stałej będą umieszczone tagi-linki
+    /* make html variable with empty string */
+    let html = ''; //zmienna będzie przyjmować kolejne fragmenty kodu HTML
+    /* get tags from data-tags attribute */
+    const articleTags = article.getAttribute('data-tags'); //"articleTags" przyjmie pobrane tagi w formie tekstu
+    /* split tags into array */
+    const articleTagsArray = articleTags.split(' '); //utworzono tablicę - funkcja ".split(' ')" usunie spacje oraz upodzieli tekst zawarty w "articleTags" na osobne elementy, które od teraz będą zawarte w tablicy "articleTagsArray"
+    /* START LOOP: for each tag */
+    for(let tag of articleTagsArray){ //wewnątrz pętli zmienna "tag" będzie treścią pojedynczego taga
+    /* generate HTML of the link */
+      const linkHTML = '<li><a href="#tag-' + tag + '">' + tag + '</a></li>';
+    /* add generated code to html variable */
+      html = html + linkHTML;
+      console.log(html);
+    /* END LOOP: for each tag */
+    }
+    /* insert HTML of all the links into the tags wrapper */
+    tagsWrapper.innerHTML = html;
+    /* END LOOP: for every article: */
+  }
+}
+generateTags();
