@@ -4,9 +4,10 @@
 const optArticleSelector = '.post', //selektor artykułów
   optTitleSelector = '.post-title', //selektor tytułów artykułów
   optTitleListSelector = '.titles', //selektor listy tytułów (linków)
-  optArticleTagsSelector = '.post-tags .list'; //selektor wybierze nam listę <ul>, w której będą zawarte tagi poszczególnych artykułów
+  optArticleTagsSelector = '.post-tags .list', //selektor wybierze nam listę <ul>, w której będą zawarte tagi poszczególnych artykułów
+  optArticleAuthorSelector = '.post-author';
 
-/* Display article after click on the proper title-link  *********************************************************************************************/
+/* Display article after click on the proper title-link  ********************************************************************************************************************************************************************************************************************************/
 function titleClickHandler(event){ //funkcja, która jest wykonywana w reakcji na event (kliknięcie na link); w argumencie "event" można znaleźć m.in. informacje "target", która zawiera odniesienie do <span>
   console.log('Link was clicked');
   event.preventDefault(); //blokuje mechanizm automatycznego przewijania strony w miejsce wskazanego przez link id (np. do artykułu) oraz zmiany adresu url w skutek kliknięcia na link
@@ -30,9 +31,9 @@ function titleClickHandler(event){ //funkcja, która jest wykonywana w reakcji n
   /* 6. Add class 'active' to the correct article [DONE] */
   targetArticle.classList.add('active');
 }
-/**********************************************************************************************************************************************************/
+/****************************************************************************************************************************************************************************************************************************************************************************************/
 
-/* Generate list of article title-links in sidebar-left ***************************************************************************************************/
+/* Generate list of article title-links in sidebar-left *********************************************************************************************************************************************************************************************************************************/
 function generateTitleLinks(customSelector = ''){
   /* 1. Remove content of titleList [DONE] */
   const titleList = document.querySelector(optTitleListSelector); //znalezienie listy linków-tytułów i przypisanie jej do stałej "titleList"
@@ -64,11 +65,11 @@ function generateTitleLinks(customSelector = ''){
     link.addEventListener('click', titleClickHandler); //powiązanie kliknięcia w link z funkcją "titleClickHandler", inaczej mówiąc: zdarzenie "click" ma wywoływać funkcję "titleClickHandler"
   }
 }
-/**********************************************************************************************************************************************************/
+/****************************************************************************************************************************************************************************************************************************************************************************************/
 
 generateTitleLinks(); //wywołanie funkcji, która wygeneruje linki na podstawie odniesienia do tytułów zawartych w elementach <article>
 
-/* Generate tags for every article ***********************************************************************************************/
+/* Generate tags for every article ******************************************************************************************************************************************************************************************************************************************************/
 function generateTags(){
   /* find all articles */
   const articles = document.querySelectorAll(optArticleSelector); //stała "articles" jest kolekcją wielu elementów, które zawierają odniesienie do każdego artykułu
@@ -83,7 +84,7 @@ function generateTags(){
     /* split tags into array */
     const articleTagsArray = articleTags.split(' '); //utworzono tablicę - funkcja ".split(' ')" usunie spacje oraz upodzieli tekst zawarty w "articleTags" na osobne elementy, które od teraz będą zawarte w tablicy "articleTagsArray"
     /* START LOOP: for each tag */
-    for(let tag of articleTagsArray){ //wewnątrz pętli zmienna "tag" będzie treścią pojedynczego taga
+    for(let tag of articleTagsArray){ //wewnątrz pętli zmienna "tag" będzie treścią pojedynczego taga (np. tag = "cat")
       /* generate HTML of the link */
       const linkHTML = '<li><a href="#tag-' + tag + '">' + tag + '</a></li>';
       /* add generated code to html variable */
@@ -94,11 +95,26 @@ function generateTags(){
     /* END LOOP: for every article: */
   }
 }
-/**********************************************************************************************************************************************************/
+/****************************************************************************************************************************************************************************************************************************************************************************************/
 
 generateTags();
 
-/* Add action after tag-links click *****************************************************************************************************/
+/* Add click listener to every tag-link *************************************************************************************************************************************************************************************************************************************************/
+/* Mamy pewną liczbę tag-linków (każdy tag może mieć kilka linków, które znajdują się w różnych artykułach), zatem każdemu tag-linkowi musimy nadać event-listenera */
+function addClickListenersToTags(){
+  /* find all links to tags [DONE] */
+  const tagLinks = document.querySelectorAll('a[href^="#tag-"]');
+
+  for(let tagLink of tagLinks){/* START LOOP: for each link */
+    /* add tagClickHandler as event listener for that link [DONE] */
+    tagLink.addEventListener('click', tagClickHandler);
+  }/* END LOOP: for each link */
+}
+/***************************************************************************************************************************************************************************************************************************************************************************************/
+
+addClickListenersToTags();
+
+/* Add action after tag-links click *****************************************************************************************************************************************************************************************************************************************************/
 function tagClickHandler(event){
   /* prevent default action for this event [DONE] */
   event.preventDefault();
@@ -125,22 +141,37 @@ function tagClickHandler(event){
   /* execute (wywołaj) function "generateTitleLinks" with article selector as argument [DONE] */
   generateTitleLinks('[data-tags~="' + tag + '"]'); //łącznik ~= można odczytać jako "znajdź elementy, które mają atrybut data-tags, który ma w sobie słowo przypisane w 'tag'".
 }
-/**********************************************************************************************************************************************************/
+/****************************************************************************************************************************************************************************************************************************************************************************************/
 
-/* Add click listener to every tag-link *****************************************************************************************************/
-/* Mamy pewną liczbę tag-linków (każdy tag może mieć kilka linków, które znajdują się w różnych artykułach),
-zatem każdemu tag-linkowi musimy nadać event-listenera */
-function addClickListenersToTags(){
-  /* find all links to tags [DONE] */
-  const tagLinks = document.querySelectorAll('a[href^="#tag-"]');
-
-  for(let tagLink of tagLinks){/* START LOOP: for each link */
-    /* add tagClickHandler as event listener for that link [DONE] */
-    tagLink.addEventListener('click', tagClickHandler);
-  }/* END LOOP: for each link */
+/****************************************************************************************************************************************************************************************************************************************************************************************/
+function generateAuthors(){
+  /* find all articles [DONE] */
+  const articles = document.querySelectorAll(optArticleSelector);
+  for(let article of articles){
+    /* find author wrapper [DONE] */
+    const authorWrapper = article.querySelector(optArticleAuthorSelector);
+    /* get author from data-author attribute [DONE] */
+    const articleAuthor = article.getAttribute('data-author');
+    /* generate HTML of the link [DONE] */
+    const linkHTML = '<a href="#author-' + articleAuthor + '">' + articleAuthor + '</a>';
+    /* insert HTML of the link into the author wrapper [DONE] */
+    authorWrapper.innerHTML = linkHTML;
+  }
 }
-/**********************************************************************************************************************************************************/
+/****************************************************************************************************************************************************************************************************************************************************************************************/
 
-addClickListenersToTags();
+generateAuthors();
 
+/****************************************************************************************************************************************************************************************************************************************************************************************/
+function addClickListenersToAuthors(){
 
+}
+/****************************************************************************************************************************************************************************************************************************************************************************************/
+
+addClickListenersToAuthors();
+
+/****************************************************************************************************************************************************************************************************************************************************************************************/
+function authorClickHandler(){
+
+}
+/****************************************************************************************************************************************************************************************************************************************************************************************/
