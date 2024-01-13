@@ -6,11 +6,11 @@ const optArticleSelector = '.post', //selektor artykułów
   optTitleListSelector = '.titles', //selektor listy tytułów (linków)
   optArticleTagsSelector = '.post-tags .list', //selektor wybierze nam listę <ul>, w której będą zawarte tagi poszczególnych artykułów
   optArticleAuthorSelector = '.post-author',
-  optTagsListSelector = '.tags .list';
+  optTagsListSelector = '.list.tags';
 
 /* Display article after click on the proper title-link  ********************************************************************************************************************************************************************************************************************************/
 function titleClickHandler(event){ //funkcja, która jest wykonywana w reakcji na event (kliknięcie na link); w argumencie "event" można znaleźć m.in. informacje "target", która zawiera odniesienie do <span>
-  console.log('Link was clicked');
+  console.log('Title was clicked');
   event.preventDefault(); //blokuje mechanizm automatycznego przewijania strony w miejsce wskazanego przez link id (np. do artykułu) oraz zmiany adresu url w skutek kliknięcia na link
   const clickedElement = this; //obiekt "this" wskazuje na element, do którego dodaliśmy "event listener", czyli na link <a>
   /* 1. Remove class 'active' from all article links [DONE] */
@@ -94,17 +94,17 @@ function generateTags(){
       html = html + linkHTML;
       /* [NEW] check if this link is NOT already in allTags */
       if(allTags.indexOf(linkHTML) == -1){ //sprawdzenie czy dany link (a właściwie jego  kod HTML) znajduje się już w tablicy -
-        /* [NEW] add generated code to allTags array */
+        /* [NEW] add generated code to allTags array [OK] */
         allTags.push(linkHTML); //- jeśli nie (warunek spełniony), to dodajemy go do tablicy
       }
     }/* END LOOP: for each tag */
     /* insert HTML of all the links into the tags wrapper */
     tagsWrapper.innerHTML = html;
-    }/* END LOOP: for every article: */
-    /* [NEW] find list of tags in right column */
-    const tagList = document.querySelector(optTagsListSelector);
-    /* [NEW] add html from allTags to tagList */
-    tagList.innerHTML = allTags.join(' '); //dadanie wszystkich linków (pobranych z tablicy) do listy, łącząc je za pomocą spacji
+  }/* END LOOP: for every article: */
+  /* [NEW] find list of tags in right column */
+  const tagList = document.querySelector(optTagsListSelector);
+  /* [NEW] add html from allTags to tagList */
+  tagList.innerHTML = allTags.join(' '); //dadanie wszystkich linków (pobranych z tablicy) do listy, łącząc je za pomocą spacji
 }
 /****************************************************************************************************************************************************************************************************************************************************************************************/
 
@@ -127,6 +127,7 @@ addClickListenersToTags();
 
 /* Add action after tag-links click *****************************************************************************************************************************************************************************************************************************************************/
 function tagClickHandler(event){
+  console.log('Tag was clicked');
   /* prevent default action for this event [DONE] */
   event.preventDefault();
   /* make new constant named "clickedElement" and give it the value of "this" [DONE] */
@@ -188,6 +189,7 @@ addClickListenersToAuthors();
 
 /****************************************************************************************************************************************************************************************************************************************************************************************/
 function authorClickHandler(event){
+  console.log('Author was clicked');
   /* prevent default action for this event [DONE] */
   event.preventDefault();
   /* make new constant named "clickedElement" and give it the value of "this" [DONE] */
