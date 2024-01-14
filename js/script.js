@@ -6,8 +6,9 @@ const optArticleSelector = '.post', //selektor artykułów
   optTitleListSelector = '.titles', //selektor listy tytułów (linków)
   optArticleTagsSelector = '.post-tags .list', //selektor wybierze nam listę <ul>, w której będą zawarte tagi poszczególnych artykułów
   optArticleAuthorSelector = '.post-author',
-  optTagsListSelector = '.list.tags';
-
+  optTagsListSelector = '.list.tags',
+  optCloudClassCount = "5",
+  optCloudClassPrefix = "tag-size-";
 
 /* Display article after click on the proper title-link  ********************************************************************************************************************************************************************************************************************************/
 function titleClickHandler(event){ //funkcja, która jest wykonywana w reakcji na event (kliknięcie na link); w argumencie "event" można znaleźć m.in. informacje "target", która zawiera odniesienie do <span>
@@ -71,7 +72,7 @@ function generateTitleLinks(customSelector = ''){
 
 generateTitleLinks(); //wywołanie funkcji, która wygeneruje linki na podstawie odniesienia do tytułów zawartych w elementach <article>
 
-/* Find max and min numbers of tag occurrence ***************************************************************************************************************************************************************************************************************************************************************************************/
+/* Find max and min numbers of tag occurrences ***************************************************************************************************************************************************************************************************************************************************************************************/
 function calculateTagParams(tags){
   const params = {max: 0, min: 999999}
   for(let tag in tags){ //pętla iterująca po obiekcie
@@ -89,8 +90,13 @@ function calculateTagParams(tags){
     params.max = tags[tag] > params.max ? tags[tag] : params.max;
     params.min = tags[tag] < params.min ? tags[tag] : params.min; */
   }
-  console.log(params);
   return params;
+}
+/****************************************************************************************************************************************************************************************************************************************************************************************/
+
+/* Choose class for tag ***************************************************************************************************************************************************************************************************************************************************************************************/
+function calculateTagClass(count, params){
+
 }
 /****************************************************************************************************************************************************************************************************************************************************************************************/
 
@@ -136,8 +142,9 @@ function generateTags(){
   let allTagsHTML = '';
   /* for each tag in allTags generate code of a link and add it to allTagsHTML */
   for(let tag in allTags){
-    allTagsHTML += '<li><a href="#tag-' + tag + '">' + tag + '</a>' + ' (' + allTags[tag] + ')</li>';
+    allTagsHTML += '<li><a href="#tag-' + tag + '" class="' + calculateTagClass(allTags[tag], tagsParams)  + '">' + tag + '</a>' + ' (' + allTags[tag] + ')</li>';
   }
+  console.log(allTagsHTML);
   /* add html form allTagsHTML to tagList */
   tagList.innerHTML = allTagsHTML;
 }
