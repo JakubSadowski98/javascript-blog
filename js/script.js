@@ -8,6 +8,7 @@ const optArticleSelector = '.post', //selektor artykułów
   optArticleAuthorSelector = '.post-author',
   optTagsListSelector = '.list.tags';
 
+
 /* Display article after click on the proper title-link  ********************************************************************************************************************************************************************************************************************************/
 function titleClickHandler(event){ //funkcja, która jest wykonywana w reakcji na event (kliknięcie na link); w argumencie "event" można znaleźć m.in. informacje "target", która zawiera odniesienie do <span>
   console.log('Title was clicked');
@@ -70,9 +71,32 @@ function generateTitleLinks(customSelector = ''){
 
 generateTitleLinks(); //wywołanie funkcji, która wygeneruje linki na podstawie odniesienia do tytułów zawartych w elementach <article>
 
+/* Find max and min numbers of tag occurrence ***************************************************************************************************************************************************************************************************************************************************************************************/
+function calculateTagParams(tags){
+  const params = {max: 0, min: 999999}
+  for(let tag in tags){ //pętla iterująca po obiekcie
+    /* 1. sposób: */
+    params.max = Math.max(tags[tag], params.max);
+    params.min = Math.min(tags[tag], params.min);
+    /* 2. sposób:
+    if(tags[tag] > params.max){
+      params.max = tags[tag];
+    }
+    if(tags[tag] < params.min){
+      params.min = tags[tag];
+    } */
+    /* 3. sposób:
+    params.max = tags[tag] > params.max ? tags[tag] : params.max;
+    params.min = tags[tag] < params.min ? tags[tag] : params.min; */
+  }
+  console.log(params);
+  return params;
+}
+/****************************************************************************************************************************************************************************************************************************************************************************************/
+
 /* Generate tags for every article ******************************************************************************************************************************************************************************************************************************************************/
 function generateTags(){
-  /* [NEW] create a new variable allTags with an empty object */
+  /* create a new variable allTags with an empty object */
   let allTags = {}; //stworzenie obiektu w celu zliczania wystąpienia tagów
   /* find all articles */
   const articles = document.querySelectorAll(optArticleSelector); //stała "articles" jest kolekcją wielu elementów, które zawierają odniesienie do każdego artykułu
@@ -92,9 +116,9 @@ function generateTags(){
       const linkHTML = '<li><a href="#tag-' + tag + '">' + tag + '</a></li>';
       /* add generated code to html variable */
       html = html + linkHTML;
-      /* [NEW] check if this link is NOT already in allTags */
+      /* check if this link is NOT already in allTags */
       if(!allTags.hasOwnProperty(tag)){ //sprawdzenie czy w obiekcie nie istnieje (operator negacji) właściwość o danym kluczu (nazwie)
-        /* [NEW] add tag to allTags object [OK] */
+        /* add tag to allTags object [OK] */
         allTags[tag] = 1; //jeśli warunek spełniony to licznik wystąpień tagu ustawiamy na 1
       } else {
         allTags[tag]++;
@@ -105,13 +129,16 @@ function generateTags(){
   }/* END LOOP: for every article: */
   /* find list of tags in right column */
   const tagList = document.querySelector(optTagsListSelector);
-  /* [NEW] create variable for all links HTML code */
+  /* [NEW] execute calculateTagParams function with allTags object as argument*/
+  const tagsParams = calculateTagParams(allTags);
+  //console.log(tagsParams);
+  /* create variable for all links HTML code */
   let allTagsHTML = '';
-  /* [NEW] for each tag in allTags generate code of a link and add it to allTagsHTML */
+  /* for each tag in allTags generate code of a link and add it to allTagsHTML */
   for(let tag in allTags){
     allTagsHTML += '<li><a href="#tag-' + tag + '">' + tag + '</a>' + ' (' + allTags[tag] + ')</li>';
   }
-  /* [NEW] add html form allTagsHTML to tagList */
+  /* add html form allTagsHTML to tagList */
   tagList.innerHTML = allTagsHTML;
 }
 /****************************************************************************************************************************************************************************************************************************************************************************************/
