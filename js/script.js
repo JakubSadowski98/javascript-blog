@@ -1,3 +1,11 @@
+const templates = { //obiekt zazwierający szablony Handlebars
+  articleLink: Handlebars.compile(document.querySelector('#template-article-link').innerHTML),
+  articleTagLink: Handlebars.compile(document.querySelector('#template-article-tag-link').innerHTML),
+  articleAuthorLink: Handlebars.compile(document.querySelector('#template-article-author-link').innerHTML),
+  tagCloudLink: Handlebars.compile(document.querySelector('#template-tag-cloud-link').innerHTML),
+  authorCloudLink: Handlebars.compile(document.querySelector('#template-author-cloud-link').innerHTML)
+};
+
 'use strict'; //kod będzie uruchamiany w "trybie ścisłym" - pomyłki, które normalnie nie wywołałyby błędu, teraz będą traktowane jak błąd i wyświetlane na czerwono
 
 /* zapisanie ustawień skryptu w stałych; skróty: "opts-" od options, "select-" od selector */
@@ -76,7 +84,9 @@ function generateTitleLinks(customSelector = ''){
     /* 3. Find the title element; get the title from the title element [DONE] */
     const articleTitle = article.querySelector(select.all.titles).innerHTML; //odnalezienie elementu za pomocą "querySelector"; odczytanie zawartości elementu za pomocą "innerHtml"
     /* 4. Create HTML of the link [DONE] */
-    const linkHTML = '<li><a href="#' + articleId + '"><span>' + articleTitle + '</span></a></li>'; //stała "linkHTML" będzie przechowywała kod HTML; podwójny cudzysłów "" jest elementem kodu HTML zatem trzeba go objąć pojedynczym cudzysłowiem ''
+    //const linkHTML = '<li><a href="#' + articleId + '"><span>' + articleTitle + '</span></a></li>'; //stała "linkHTML" będzie przechowywała kod HTML; podwójny cudzysłów "" jest elementem kodu HTML zatem trzeba go objąć pojedynczym cudzysłowiem ''
+    const linkHTMLData = {id: articleId, title: articleTitle}; //[new]
+    const linkHTML = templates.articleLink(linkHTMLData);//[new]
     /* 5. Insert (wstaw) link into titleList [DONE] */
     html = html + linkHTML; //analogicznie: x = x + 1, po każdej iteracji pętli dodajemy kolejną linijkę kodu HTML do zmiennej
   }
@@ -145,7 +155,9 @@ function generateTags(){
     /* START LOOP: for each tag */
     for(let tag of articleTagsArray){ //wewnątrz pętli zmienna "tag" będzie treścią pojedynczego taga (np. tag = "cat")
       /* generate HTML of the link */
-      const linkHTML = '<li><a href="#tag-' + tag + '">' + tag + '</a></li>';
+      //const linkHTML = '<li><a href="#tag-' + tag + '">' + tag + '</a></li>';
+      const linkHTMLData = {id: tag, name: tag}; //[new]
+      const linkHTML = templates.articleTagLink(linkHTMLData);//[new]
       /* add generated code to html variable */
       html = html + linkHTML;
       /* check if this link is NOT already in allTags */
@@ -165,13 +177,20 @@ function generateTags(){
   const tagsParams = calculateParams(allTags);
   //console.log(tagsParams);
   /* create variable for all links HTML code */
-  let allTagsHTML = '';
+  //let allTagsHTML = '';
+  const allTagsData = {tags: []}; //[new] obiekt zawierający tablicę
   /* for each tag in allTags generate code of a link and add it to allTagsHTML */
   for(let tag in allTags){
-    allTagsHTML += '<li><a href="#tag-' + tag + '" class="' + calculateClass(allTags[tag], tagsParams, opts.tagSizes.count, opts.tagSizes.classPrefix)  + '">' + tag + '</a></li>';
+    //allTagsHTML += '<li><a href="#tag-' + tag + '" class="' + calculateClass(allTags[tag], tagsParams, opts.tagSizes.count, opts.tagSizes.classPrefix)  + '">' + tag + '</a></li>';
+    allTagsData.tags.push({ //[new] do tablicy wstawiamy kolejne obiekty
+      tag: tag,
+      count: allTags[tag],
+      className: calculateClass(allTags[tag], tagsParams,  opts.tagSizes.count, opts.tagSizes.classPrefix)
+    });
   }
   /* add html form allTagsHTML to tagList */
-  tagList.innerHTML = allTagsHTML;
+  //tagList.innerHTML = allTagsHTML;
+  tagList.innerHTML = templates.tagCloudLink(allTagsData); //[new] wstawia do szablonu wartości obiektu
 }
 /****************************************************************************************************************************************************************************************************************************************************************************************/
 
@@ -234,7 +253,9 @@ function generateAuthors(){
     /* get author from data-author attribute [DONE] */
     const articleAuthor = article.getAttribute('data-author');//np. articleAuthor = Marion Berry
     /* generate HTML of the link [DONE] */
-    const linkHTML = '<a href="#author-' + articleAuthor + '">' + articleAuthor + '</a>';
+    //const linkHTML = '<a href="#author-' + articleAuthor + '">' + articleAuthor + '</a>';
+    const linkHTMLData = {id: articleAuthor, name: articleAuthor}; //[new]
+    const linkHTML = templates.articleAuthorLink(linkHTMLData);//[new]
     /* [new] check if this link is NOT already in allAuthors */
     if(!allAuthors.hasOwnProperty(articleAuthor)){ //sprawdzenie czy w obiekcie nie istnieje (operator negacji) właściwość o danym kluczu (nazwie)
       /* add author to allAuthors object [OK] */
@@ -250,13 +271,20 @@ function generateAuthors(){
   /* [NEW] execute calculateTagParams function with allAuthors object as argument*/
   const authorsParams = calculateParams(allAuthors);
   /* [NEW] create variable for all links HTML code */
-  let allAuthorsHTML = '';
+  //let allAuthorsHTML = '';
+  const allAuthorsData = {authors: []}; //[new] obiekt zawierający tablicę
   /* [NEW] for each author in allAuthors generate code of a link and add it to allAuthorsHTML */
-  for(let author in allAuthors){
-    allAuthorsHTML += '<li><a href="#author-' + author + '" class="' + calculateClass(allAuthors[author], authorsParams, opts.authorSizes.count, opts.authorSizes.classPrefix)  + '">' + author + '</a></li>';
+  for(let author in allAuthors){ //iterowanie po elementach obiektu
+    //allAuthorsHTML += '<li><a href="#author-' + author + '" class="' + calculateClass(allAuthors[author], authorsParams, opts.authorSizes.count, opts.authorSizes.classPrefix)  + '">' + author + '</a></li>';
+    allAuthorsData.authors.push({ //[new] do tablicy wstawiamy kolejne obiekty
+      author: author,
+      count: allAuthors[author],
+      className: calculateClass(allAuthors[author], authorsParams,  opts.authorSizes.count, opts.authorSizes.classPrefix)
+    });
   }
   /* [NEW]add html form allTagsHTML to tagList */
-  authorList.innerHTML = allAuthorsHTML;
+  //authorList.innerHTML = allAuthorsHTML;
+  authorList.innerHTML = templates.authorCloudLink(allAuthorsData); //[new] wstawia do szablonu wartości obiektu
 }
 /****************************************************************************************************************************************************************************************************************************************************************************************/
 

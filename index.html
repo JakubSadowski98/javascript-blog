@@ -200,6 +200,31 @@
         </main>
       </div>
     </div>
+    <!-- szablony HANDLEBARS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.1.0/handlebars.min.js"></script>
+    <script id="template-article-link" type="text/x-handlebars-template">
+      <li><a href="#{{ id }}"><span>{{ title }}</span></a></li>
+    </script>
+    <script id="template-article-tag-link" type="text/x-handlebars-template">
+      <li><a href="#tag-{{ id }}">{{ name }}</a></li>
+    </script>
+    <script id="template-article-author-link" type="text/x-handlebars-template">
+      <a href="#author-{{ id }}">{{ name }}</a>
+    </script>
+    <script id="template-tag-cloud-link" type="text/x-handlebars-template">
+      <ul>
+        {{#each tags}}
+        <li><a href="#tag-{{ tag }}" class="{{ className }}">{{ tag }}</a></li>
+        {{/each}}
+      </ul>
+    </script>
+    <script id="template-author-cloud-link" type="text/x-handlebars-template">
+      <ul>
+        {{#each authors}}
+        <li><a href="#author-{{ author }}" class="{{ className }}">{{ author }}</a></li>
+        {{/each}}
+      </ul>
+    </script>
     <script src="js/script.js"></script>
   </body>
 </html>

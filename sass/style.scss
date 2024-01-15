@@ -89,7 +89,9 @@ body {
 }
 
 /* Tags */
-.tags {
+.list.tags ul {
+  padding-inline-start: 0px;
+
   li {
     display: inline-block;
     margin: 0 10px 0 0;
@@ -117,9 +119,12 @@ body {
 }
 
 /* Authors */
-.authors {
+.list.authors ul {
+  padding-inline-start: 0px;
+
   li {
-    margin-bottom: 12px;
+    display: inline-block;
+    margin: 0 10px 0 0;
 
     a {
       text-decoration: none;
