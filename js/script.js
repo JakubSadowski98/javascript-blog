@@ -1,6 +1,6 @@
 'use strict'; //kod będzie uruchamiany w "trybie ścisłym" - pomyłki, które normalnie nie wywołałyby błędu, teraz będą traktowane jak błąd i wyświetlane na czerwono
 
-/* zapisanie "ustawień" skryptu w stałych; "opts-" od options, "select-" od selector */
+/* zapisanie ustawień skryptu w stałych; skróty: "opts-" od options, "select-" od selector */
 const opts = {
   tagSizes: {
     count: 4,
