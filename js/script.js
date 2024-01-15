@@ -7,8 +7,9 @@ const optArticleSelector = '.post', //selektor artykułów
   optArticleTagsSelector = '.post-tags .list', //selektor wybierze nam listę <ul>, w której będą zawarte tagi poszczególnych artykułów
   optArticleAuthorSelector = '.post-author',
   optTagsListSelector = '.list.tags',
-  optCloudClassCount = "5",
-  optCloudClassPrefix = "tag-size-";
+  optCloudClassCount = "4",
+  optCloudClassPrefix = "tag-size-",
+  optAuthorsListSelector = ".list.authors";
 
 /* Display article after click on the proper title-link  ********************************************************************************************************************************************************************************************************************************/
 function titleClickHandler(event){ //funkcja, która jest wykonywana w reakcji na event (kliknięcie na link); w argumencie "event" można znaleźć m.in. informacje "target", która zawiera odniesienie do <span>
@@ -202,18 +203,39 @@ function tagClickHandler(event){
 
 /****************************************************************************************************************************************************************************************************************************************************************************************/
 function generateAuthors(){
+  /* [new] create a new variable allAuthors with an empty object */
+  let allAuthors = {}; //stworzenie obiektu w celu zliczania wystąpienia autorów
   /* find all articles [DONE] */
   const articles = document.querySelectorAll(optArticleSelector);
   for(let article of articles){
     /* find author wrapper [DONE] */
     const authorWrapper = article.querySelector(optArticleAuthorSelector);
     /* get author from data-author attribute [DONE] */
-    const articleAuthor = article.getAttribute('data-author');
+    const articleAuthor = article.getAttribute('data-author');//np. articleAuthor = Marion Berry
     /* generate HTML of the link [DONE] */
     const linkHTML = '<a href="#author-' + articleAuthor + '">' + articleAuthor + '</a>';
+    /* [new] check if this link is NOT already in allAuthors */
+    if(!allAuthors.hasOwnProperty(articleAuthor)){ //sprawdzenie czy w obiekcie nie istnieje (operator negacji) właściwość o danym kluczu (nazwie)
+      /* add author to allAuthors object [OK] */
+      allAuthors[articleAuthor] = 1; //jeśli warunek spełniony to licznik wystąpień autora ustawiamy na 1
+    } else {
+      allAuthors[articleAuthor]++;
+    }
     /* insert HTML of the link into the author wrapper [DONE] */
     authorWrapper.innerHTML = linkHTML;
   }
+  /* [NEW] find list of authors in right column */
+  const authorList = document.querySelector(optAuthorsListSelector);
+  /* [NEW] execute calculateTagParams function with allAuthors object as argument*/
+  const authorsParams = calculateTagParams(allAuthors);
+  /* [NEW] create variable for all links HTML code */
+  let allAuthorsHTML = '';
+  /* [NEW] for each author in allAuthors generate code of a link and add it to allAuthorsHTML */
+  for(let author in allAuthors){
+    allAuthorsHTML += '<li><a href="#author-' + author + '" class="' + calculateTagClass(allAuthors[author], authorsParams)  + '">' + author + '</a></li>';
+  }
+  /* [NEW]add html form allTagsHTML to tagList */
+  authorList.innerHTML = allAuthorsHTML;
 }
 /****************************************************************************************************************************************************************************************************************************************************************************************/
 
