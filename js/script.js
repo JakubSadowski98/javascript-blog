@@ -96,7 +96,11 @@ function calculateTagParams(tags){
 
 /* Choose class for tag ***************************************************************************************************************************************************************************************************************************************************************************************/
 function calculateTagClass(count, params){
-
+  const normalizedCount = count - params.min; //znormalizowanie liczb - sprawdzenie jak daleko mamy do najmniejszej liczby
+  const normalizedMax = params.max - params.min; //zakres pomiędzu najmniejszą, a największą liczbą wystąpień
+  const percentage = normalizedCount / normalizedMax; //ustalenie procentu zakresu pomiędzy najmniejszą, a największą liczbą wystąpień
+  const classNumber = Math.floor( percentage * (optCloudClassCount - 1) + 1); //zastosowanie algorytmu podobnego do losowania liczby całkowitej
+  return optCloudClassPrefix + classNumber; //np. "tag-size-" + 5
 }
 /****************************************************************************************************************************************************************************************************************************************************************************************/
 
@@ -144,7 +148,6 @@ function generateTags(){
   for(let tag in allTags){
     allTagsHTML += '<li><a href="#tag-' + tag + '" class="' + calculateTagClass(allTags[tag], tagsParams)  + '">' + tag + '</a>' + ' (' + allTags[tag] + ')</li>';
   }
-  console.log(allTagsHTML);
   /* add html form allTagsHTML to tagList */
   tagList.innerHTML = allTagsHTML;
 }
