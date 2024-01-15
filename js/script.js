@@ -1,17 +1,36 @@
 'use strict'; //kod będzie uruchamiany w "trybie ścisłym" - pomyłki, które normalnie nie wywołałyby błędu, teraz będą traktowane jak błąd i wyświetlane na czerwono
 
-/* zapisanie "ustawień" skryptu w stałych; prefiks "opt-" (skrót od option) ma odróżniać te stałe */
-const optArticleSelector = '.post', //selektor artykułów
-  optTitleSelector = '.post-title', //selektor tytułów artykułów
-  optTitleListSelector = '.titles', //selektor listy tytułów (linków)
-  optArticleTagsSelector = '.post-tags .list', //selektor wybierze nam listę <ul>, w której będą zawarte tagi poszczególnych artykułów
-  optArticleAuthorSelector = '.post-author',
-  optTagsListSelector = '.list.tags',
-  optTagCloudClassCount = "4", // [new]
-  optTagCloudClassPrefix = "tag-size-", // [new]
-  optAuthorsListSelector = ".list.authors",
-  optAuthorCloudClassCount = "2", // [new]
-  optAuthorCloudClassPrefix = "author-size-"; // [new]
+/* zapisanie "ustawień" skryptu w stałych; "opts-" od options, "select-" od selector */
+const opts = {
+  tagSizes: {
+    count: 4,
+    classPrefix: 'tag-size-',
+  },
+  authorSizes: {
+    count: 2,
+    classPrefix: 'author-size-',
+  },
+};
+
+const select = {
+  all: {
+    articles: '.post',
+    titles: '.post-title',
+    linksTo: {
+      tags: 'a[href^="#tag-"]',
+      authors: 'a[href^="#author-"]',
+    },
+  },
+  article: {
+    tags: '.post-tags .list',
+    author: '.post-author',
+  },
+  listOf: {
+    titles: '.titles',
+    tags: '.list.tags',
+    authors: '.list.authors',
+  },
+};
 
 /* Display article after click on the proper title-link  ********************************************************************************************************************************************************************************************************************************/
 function titleClickHandler(event){ //funkcja, która jest wykonywana w reakcji na event (kliknięcie na link); w argumencie "event" można znaleźć m.in. informacje "target", która zawiera odniesienie do <span>
@@ -42,20 +61,20 @@ function titleClickHandler(event){ //funkcja, która jest wykonywana w reakcji n
 /* Generate list of article title-links in sidebar-left *********************************************************************************************************************************************************************************************************************************/
 function generateTitleLinks(customSelector = ''){
   /* 1. Remove content of titleList [DONE] */
-  const titleList = document.querySelector(optTitleListSelector); //znalezienie listy linków-tytułów i przypisanie jej do stałej "titleList"
+  const titleList = document.querySelector(select.listOf.titles); //znalezienie listy linków-tytułów i przypisanie jej do stałej "titleList"
   function clearMessages(){ //funkcja usuwająca zawartość elementu "titleList" - usuwa wszystkie linki
     titleList.innerHTML = '';
   }
   clearMessages(); //wywołanie funkcji
 
   /* for each article */
-  const articles = document.querySelectorAll(optArticleSelector + customSelector); //znalezienie wszystkich artykułów (zawierających dany tag, którego selektor atrybutu został wysłany dp funkcji jako argument) i zapisanie ich do stałej "articles"
+  const articles = document.querySelectorAll(select.all.articles + customSelector); //znalezienie wszystkich artykułów (zawierających dany tag, którego selektor atrybutu został wysłany dp funkcji jako argument) i zapisanie ich do stałej "articles"
   let html = ''; //stworzenie zmiennej (nie stałej!) "html", w której zapiszemy linijki kodu HTML dla linków
   for(let article of articles){ //utworznie pętli do wykonania pozostałych operacji z osobna dla każdego z artykułów
     /* 2. Get the article id [DONE] */
     const articleId = article.getAttribute('id');
     /* 3. Find the title element; get the title from the title element [DONE] */
-    const articleTitle = article.querySelector(optTitleSelector).innerHTML; //odnalezienie elementu za pomocą "querySelector"; odczytanie zawartości elementu za pomocą "innerHtml"
+    const articleTitle = article.querySelector(select.all.titles).innerHTML; //odnalezienie elementu za pomocą "querySelector"; odczytanie zawartości elementu za pomocą "innerHtml"
     /* 4. Create HTML of the link [DONE] */
     const linkHTML = '<li><a href="#' + articleId + '"><span>' + articleTitle + '</span></a></li>'; //stała "linkHTML" będzie przechowywała kod HTML; podwójny cudzysłów "" jest elementem kodu HTML zatem trzeba go objąć pojedynczym cudzysłowiem ''
     /* 5. Insert (wstaw) link into titleList [DONE] */
@@ -77,11 +96,11 @@ generateTitleLinks(); //wywołanie funkcji, która wygeneruje linki na podstawie
 
 /* Find max and min numbers of tag occurrences ***************************************************************************************************************************************************************************************************************************************************************************************/
 function calculateParams(tags){
-  const params = {max: 0, min: 999999}
+  const params = {max: 0, min: 999999};
   for(let tag in tags){ //pętla iterująca po obiekcie
     /* 1. sposób: */
-    params.max = Math.max(tags[tag], params.max);
-    params.min = Math.min(tags[tag], params.min);
+    params.max = Math.max(tags[tag], params.max); //wybierze największą liczbę z pośród pary liczb
+    params.min = Math.min(tags[tag], params.min); //wybierze najmniejszą liczbę z pośród pary liczb
     /* 2. sposób:
     if(tags[tag] > params.max){
       params.max = tags[tag];
@@ -100,10 +119,10 @@ function calculateParams(tags){
 /* Choose class for tag ***************************************************************************************************************************************************************************************************************************************************************************************/
 function calculateClass(count, params, cloudClassCount, cloudClassPrefix){
   const normalizedCount = count - params.min; //znormalizowanie liczb - sprawdzenie jak daleko mamy do najmniejszej liczby
-  const normalizedMax = params.max - params.min; //zakres pomiędzu najmniejszą, a największą liczbą wystąpień
+  const normalizedMax = params.max - params.min; //zakres pomiędzy najmniejszą, a największą liczbą wystąpień
   const percentage = normalizedCount / normalizedMax; //ustalenie procentu zakresu pomiędzy najmniejszą, a największą liczbą wystąpień
   const classNumber = Math.floor( percentage * (cloudClassCount - 1) + 1); //zastosowanie algorytmu podobnego do losowania liczby całkowitej
-  return cloudClassPrefix + classNumber; //np. "tag-size-" + 5
+  return cloudClassPrefix + classNumber; //np. "tag-size-" + 5 zwraca "tag-size-5"
 }
 /****************************************************************************************************************************************************************************************************************************************************************************************/
 
@@ -112,11 +131,11 @@ function generateTags(){
   /* create a new variable allTags with an empty object */
   let allTags = {}; //stworzenie obiektu w celu zliczania wystąpienia tagów
   /* find all articles */
-  const articles = document.querySelectorAll(optArticleSelector); //stała "articles" jest kolekcją wielu elementów, które zawierają odniesienie do każdego artykułu
+  const articles = document.querySelectorAll(select.all.articles); //stała "articles" jest kolekcją wielu elementów, które zawierają odniesienie do każdego artykułu
   /* START LOOP: for every article: */
   for(let article of articles){ //za pomocą pętli przechodzimy (iterujemy) po kolekcji elementów zawartych w "articles"
     /* find tags wrapper */
-    const tagsWrapper = article.querySelector(optArticleTagsSelector); //w tej stałej będą umieszczone tagi-linki
+    const tagsWrapper = article.querySelector(select.article.tags); //w tej stałej będą umieszczone tagi-linki
     /* make html variable with empty string */
     let html = ''; //zmienna będzie przyjmować kolejne fragmenty kodu HTML
     /* get tags from data-tags attribute */
@@ -141,7 +160,7 @@ function generateTags(){
     tagsWrapper.innerHTML = html;
   }/* END LOOP: for every article: */
   /* find list of tags in right column */
-  const tagList = document.querySelector(optTagsListSelector);
+  const tagList = document.querySelector(select.listOf.tags);
   /* [NEW] execute calculateTagParams function with allTags object as argument*/
   const tagsParams = calculateParams(allTags);
   //console.log(tagsParams);
@@ -149,7 +168,7 @@ function generateTags(){
   let allTagsHTML = '';
   /* for each tag in allTags generate code of a link and add it to allTagsHTML */
   for(let tag in allTags){
-    allTagsHTML += '<li><a href="#tag-' + tag + '" class="' + calculateClass(allTags[tag], tagsParams, optTagCloudClassCount, optTagCloudClassPrefix)  + '">' + tag + '</a></li>';
+    allTagsHTML += '<li><a href="#tag-' + tag + '" class="' + calculateClass(allTags[tag], tagsParams, opts.tagSizes.count, opts.tagSizes.classPrefix)  + '">' + tag + '</a></li>';
   }
   /* add html form allTagsHTML to tagList */
   tagList.innerHTML = allTagsHTML;
@@ -162,7 +181,7 @@ generateTags();
 /* Mamy pewną liczbę tag-linków (każdy tag może mieć kilka linków, które znajdują się w różnych artykułach), zatem każdemu tag-linkowi musimy nadać event-listenera */
 function addClickListenersToTags(){
   /* find all links to tags [DONE] */
-  const tagLinks = document.querySelectorAll('a[href^="#tag-"]');
+  const tagLinks = document.querySelectorAll(select.all.linksTo.tags);
 
   for(let tagLink of tagLinks){/* START LOOP: for each link */
     /* add tagClickHandler as event listener for that link [DONE] */
@@ -208,10 +227,10 @@ function generateAuthors(){
   /* [new] create a new variable allAuthors with an empty object */
   let allAuthors = {}; //stworzenie obiektu w celu zliczania wystąpienia autorów
   /* find all articles [DONE] */
-  const articles = document.querySelectorAll(optArticleSelector);
+  const articles = document.querySelectorAll(select.all.articles);
   for(let article of articles){
     /* find author wrapper [DONE] */
-    const authorWrapper = article.querySelector(optArticleAuthorSelector);
+    const authorWrapper = article.querySelector(select.article.author);
     /* get author from data-author attribute [DONE] */
     const articleAuthor = article.getAttribute('data-author');//np. articleAuthor = Marion Berry
     /* generate HTML of the link [DONE] */
@@ -227,14 +246,14 @@ function generateAuthors(){
     authorWrapper.innerHTML = linkHTML;
   }
   /* [NEW] find list of authors in right column */
-  const authorList = document.querySelector(optAuthorsListSelector);
+  const authorList = document.querySelector(select.listOf.authors);
   /* [NEW] execute calculateTagParams function with allAuthors object as argument*/
   const authorsParams = calculateParams(allAuthors);
   /* [NEW] create variable for all links HTML code */
   let allAuthorsHTML = '';
   /* [NEW] for each author in allAuthors generate code of a link and add it to allAuthorsHTML */
   for(let author in allAuthors){
-    allAuthorsHTML += '<li><a href="#author-' + author + '" class="' + calculateClass(allAuthors[author], authorsParams, optAuthorCloudClassCount, optAuthorCloudClassPrefix)  + '">' + author + '</a></li>';
+    allAuthorsHTML += '<li><a href="#author-' + author + '" class="' + calculateClass(allAuthors[author], authorsParams, opts.authorSizes.count, opts.authorSizes.classPrefix)  + '">' + author + '</a></li>';
   }
   /* [NEW]add html form allTagsHTML to tagList */
   authorList.innerHTML = allAuthorsHTML;
@@ -246,7 +265,7 @@ generateAuthors();
 /****************************************************************************************************************************************************************************************************************************************************************************************/
 function addClickListenersToAuthors(){
   /* find all links to authors [DONE] */
-  const authorLinks = document.querySelectorAll('a[href^="#author-"]');
+  const authorLinks = document.querySelectorAll(select.all.linksTo.authors);
   /* add authorClickHandler as event listener for every link [DONE] */
   for(let authorLink of authorLinks){
     authorLink.addEventListener('click', authorClickHandler);
