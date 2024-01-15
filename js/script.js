@@ -7,9 +7,11 @@ const optArticleSelector = '.post', //selektor artykułów
   optArticleTagsSelector = '.post-tags .list', //selektor wybierze nam listę <ul>, w której będą zawarte tagi poszczególnych artykułów
   optArticleAuthorSelector = '.post-author',
   optTagsListSelector = '.list.tags',
-  optCloudClassCount = "4",
-  optCloudClassPrefix = "tag-size-",
-  optAuthorsListSelector = ".list.authors";
+  optTagCloudClassCount = "4", // [new]
+  optTagCloudClassPrefix = "tag-size-", // [new]
+  optAuthorsListSelector = ".list.authors",
+  optAuthorCloudClassCount = "2", // [new]
+  optAuthorCloudClassPrefix = "author-size-"; // [new]
 
 /* Display article after click on the proper title-link  ********************************************************************************************************************************************************************************************************************************/
 function titleClickHandler(event){ //funkcja, która jest wykonywana w reakcji na event (kliknięcie na link); w argumencie "event" można znaleźć m.in. informacje "target", która zawiera odniesienie do <span>
@@ -74,7 +76,7 @@ function generateTitleLinks(customSelector = ''){
 generateTitleLinks(); //wywołanie funkcji, która wygeneruje linki na podstawie odniesienia do tytułów zawartych w elementach <article>
 
 /* Find max and min numbers of tag occurrences ***************************************************************************************************************************************************************************************************************************************************************************************/
-function calculateTagParams(tags){
+function calculateParams(tags){
   const params = {max: 0, min: 999999}
   for(let tag in tags){ //pętla iterująca po obiekcie
     /* 1. sposób: */
@@ -96,12 +98,12 @@ function calculateTagParams(tags){
 /****************************************************************************************************************************************************************************************************************************************************************************************/
 
 /* Choose class for tag ***************************************************************************************************************************************************************************************************************************************************************************************/
-function calculateTagClass(count, params){
+function calculateClass(count, params, cloudClassCount, cloudClassPrefix){
   const normalizedCount = count - params.min; //znormalizowanie liczb - sprawdzenie jak daleko mamy do najmniejszej liczby
   const normalizedMax = params.max - params.min; //zakres pomiędzu najmniejszą, a największą liczbą wystąpień
   const percentage = normalizedCount / normalizedMax; //ustalenie procentu zakresu pomiędzy najmniejszą, a największą liczbą wystąpień
-  const classNumber = Math.floor( percentage * (optCloudClassCount - 1) + 1); //zastosowanie algorytmu podobnego do losowania liczby całkowitej
-  return optCloudClassPrefix + classNumber; //np. "tag-size-" + 5
+  const classNumber = Math.floor( percentage * (cloudClassCount - 1) + 1); //zastosowanie algorytmu podobnego do losowania liczby całkowitej
+  return cloudClassPrefix + classNumber; //np. "tag-size-" + 5
 }
 /****************************************************************************************************************************************************************************************************************************************************************************************/
 
@@ -141,13 +143,13 @@ function generateTags(){
   /* find list of tags in right column */
   const tagList = document.querySelector(optTagsListSelector);
   /* [NEW] execute calculateTagParams function with allTags object as argument*/
-  const tagsParams = calculateTagParams(allTags);
+  const tagsParams = calculateParams(allTags);
   //console.log(tagsParams);
   /* create variable for all links HTML code */
   let allTagsHTML = '';
   /* for each tag in allTags generate code of a link and add it to allTagsHTML */
   for(let tag in allTags){
-    allTagsHTML += '<li><a href="#tag-' + tag + '" class="' + calculateTagClass(allTags[tag], tagsParams)  + '">' + tag + '</a></li>';
+    allTagsHTML += '<li><a href="#tag-' + tag + '" class="' + calculateClass(allTags[tag], tagsParams, optTagCloudClassCount, optTagCloudClassPrefix)  + '">' + tag + '</a></li>';
   }
   /* add html form allTagsHTML to tagList */
   tagList.innerHTML = allTagsHTML;
@@ -227,12 +229,12 @@ function generateAuthors(){
   /* [NEW] find list of authors in right column */
   const authorList = document.querySelector(optAuthorsListSelector);
   /* [NEW] execute calculateTagParams function with allAuthors object as argument*/
-  const authorsParams = calculateTagParams(allAuthors);
+  const authorsParams = calculateParams(allAuthors);
   /* [NEW] create variable for all links HTML code */
   let allAuthorsHTML = '';
   /* [NEW] for each author in allAuthors generate code of a link and add it to allAuthorsHTML */
   for(let author in allAuthors){
-    allAuthorsHTML += '<li><a href="#author-' + author + '" class="' + calculateTagClass(allAuthors[author], authorsParams)  + '">' + author + '</a></li>';
+    allAuthorsHTML += '<li><a href="#author-' + author + '" class="' + calculateClass(allAuthors[author], authorsParams, optAuthorCloudClassCount, optAuthorCloudClassPrefix)  + '">' + author + '</a></li>';
   }
   /* [NEW]add html form allTagsHTML to tagList */
   authorList.innerHTML = allAuthorsHTML;
