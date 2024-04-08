@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css?family=Oswald:400,600|Sacramento|Source+Sans+Pro:300&subset=latin-ext');
+@import 'https://fonts.googleapis.com/css?family=Oswald:400,600|Sacramento|Source+Sans+Pro:300&subset=latin-ext';
 
 /* Variables */
 $color-light: #fff;
@@ -90,7 +90,7 @@ body {
 
 /* Tags */
 .list.tags ul {
-  padding-inline-start: 0px;
+  padding-inline-start: 0;
 
   li {
     display: inline-block;
@@ -99,18 +99,22 @@ body {
     a {
       text-decoration: none;
     }
+
     .tag-size-1 {
       font-size: 125%;
       color: blue;
     }
+
     .tag-size-2 {
       font-size: 150%;
       color: green;
     }
+
     .tag-size-3 {
       font-size: 175%;
       color: orange;
     }
+
     .tag-size-4 {
       font-size: 200%;
       color: red;
@@ -120,7 +124,7 @@ body {
 
 /* Authors */
 .list.authors ul {
-  padding-inline-start: 0px;
+  padding-inline-start: 0;
 
   li {
     display: inline-block;
@@ -129,10 +133,12 @@ body {
     a {
       text-decoration: none;
     }
+
     .author-size-1 {
       font-size: 125%;
       color: blue;
     }
+
     .author-size-2 {
       font-size: 150%;
       color: red;
