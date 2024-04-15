@@ -17,7 +17,7 @@
             </ul>
           </aside>
           <section class="posts">
-            <article class="post active" id="article-1" data-tags="cat cactus scissors" data-author="Marion Berry">
+            <article class="post active" id="article-1" data-tags="cat cactus scissors" data-author="Marion Berry"> <!-- data-tags, data-author - customowe atrybuty -->
               <h3 class="post-title">Article 1</h3>
               <p class="post-author"><!-- tu będzie wstawiany kod "na żywo" - poprzez działanie skryptu js --></p>
               <div class="post-content">
@@ -212,20 +212,20 @@
     </script>
     <script id="template-tag-cloud-link" type="text/x-handlebars-template">
       <ul>
-        {{#each tags}}
-        <li><a href="#tag-{{ tag }}" class="{{ className }}">{{ tag }}</a></li>
+        {{#each tags}} <!-- iterowanie po tablicy tags -->
+          <li><a href="#tag-{{ tag }}" class="{{ className }}">{{ tag }}</a></li>
         {{/each}}
       </ul>
     </script>
     <script id="template-author-cloud-link" type="text/x-handlebars-template">
       <ul>
-        {{#each authors}}
-        <li><a href="#author-{{ author }}" class="{{ className }}">{{ author }}</a></li>
+        {{#each authors}} <!-- iterowanie po tablicy authors -->
+          <li><a href="#author-{{ author }}" class="{{ className }}">{{ author }}</a></li>
         {{/each}}
       </ul>
     </script>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.1.0/handlebars.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.1.0/handlebars.min.js"></script> <!-- podłączenie pliku JS z biblioteką Handlebars -->
     <script src="js/script.js"></script>
   </body>
 </html>
