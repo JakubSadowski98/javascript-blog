@@ -1,11 +1,22 @@
-@import 'https://fonts.googleapis.com/css?family=Oswald:400,600|Sacramento|Source+Sans+Pro:300&subset=latin-ext';
+@import 'https://fonts.googleapis.com/css?family=Oswald:400,600|Sacramento|Source+Sans+Pro:300|Permanent+Marker&subset=latin-ext';
 
 /* Variables */
-$color-light: #fff;
-$color-dark: #444;
-$font-logo: 'Sacramento', cursive;
+$color-background-one: #4cd137;
+$color-background-two: #fff;
+$color-font: #273c75;
+$font-logo: 'Permanent Marker', cursive;
 $font-header: 'Oswald', sans-serif;
 $font-text: 'Source Sans Pro', sans-serif;
+
+/* Clearfix method */
+.clearfix::before, .clearfix::after {
+  content: " ";
+  display: table;
+}
+
+.clearfix::after {
+  clear: both;
+}
 
 /* Global */
 *, *::before, *::after {
@@ -13,9 +24,9 @@ $font-text: 'Source Sans Pro', sans-serif;
 }
 
 body {
-  background: $color-light;
+  background: $color-background-one;
   font-family: $font-text;
-  color: $color-dark;
+  color: $color-font;
   font-weight: 300;
   font-size: 16px;
   line-height: 1.7;
@@ -35,7 +46,7 @@ body {
   span {
     text-transform: none;
     font-weight: 400;
-    color: lighten($color-dark, 20%);
+    color: lighten($color-font, 20%);
   }
 }
 
@@ -51,13 +62,15 @@ body {
 
 .posts {
   flex: 2 0 0;
+  position: relative;
+  overflow: auto;
 }
 
 .sidebar, .posts {
-  background: $color-light;
+  background: $color-background-two;
   margin-right: 10px;
   padding: 40px;
-  border: 1px solid $color-dark;
+  border: 1px solid $color-font;
   border-radius: 5px;
 }
 
@@ -148,10 +161,16 @@ body {
 
 /* Post */
 .post {
-  display: none;
+  position: absolute;
+  left: 40px;
+  right: 40px;
+  opacity: 0;
+  transition: all 0.6s;
+  z-index: 1;
 
   &.active {
-    display: block;
+    opacity: 1;
+    z-index: 2;
   }
 }
 
@@ -164,5 +183,26 @@ body {
 
   p {
     margin: 0 10px 0 0;
+  }
+}
+
+/****** Media ******/
+@media (max-width: 767px) { // tworzenie wersji mobilnej strony (style mobile)
+  .wrapper {
+    flex-direction: column;
+  }
+
+  .sidebar, .posts {
+    margin-top: 10px;
+    flex: auto;
+  }
+
+  .posts {
+    height: 500px;
+    overflow: auto;
+  }
+
+  .logo {
+    font-size: 80px;
   }
 }
